@@ -20,27 +20,54 @@ import java.util.ArrayList;
  * 
  * Responsibilities of class:
  * Store the possibility of a move given the rules of a piece and the squares the piece would pass through
- * Currently a work in progress to support the piece classes
  */
 
 public class Results
 {
-	private Square[] passedSquares;
-	private boolean possible;
+	private Square[] passedSquares; //Results has-many passedSquares
+	private boolean possible; //Results has-a possible
+	//This constructor takes in values for the passedSquares and whetherPossible
 	public Results(ArrayList <Square> whichSquaresPassed, boolean whetherPossible)
 	{
 		passedSquares = new Square[whichSquaresPassed.size()];
 		passedSquares = whichSquaresPassed.toArray(passedSquares);
 		possible = whetherPossible;
 	}
+	/**
+	* Purpose: Check if a king is moving on the right turn and in the right way
+	* 
+	* @param endPosition where the user has selected to put the queen
+	* @param player1Goes if this is true, then only white pieces can move. Otherwise, only black pieces can move
+	* @return a Results object storing whether the check found the move to be possible,
+	* and if so, what spaces the king would pass through.
+	*/
 	public Results(boolean whetherPossible)
 	{
 		possible = whetherPossible;
 	}
+	/**
+	* Purpose: Find out if the move is possible based on the check performed by the piece
+	* 
+	* @return true if the move is possible, false otherwise
+	*/
 	public boolean getPossible()
 	{
 		return possible;
 	}
+	/**
+	* Purpose: Find out what squares the piece will have to pass through
+	* 
+	* @return an array of the squares
+	*/
+	public Square[] getSquares()
+	{
+		return passedSquares;
+	}
+	/**
+	* Purpose: Make a list of what squares the piece will have to pass through to make the move. Currently used just for testing purposes
+	* 
+	* @return a String listing the coordinates of each square passed through
+	*/
 	public String getStringOfSquares()
 	{
 		String list = "";

@@ -105,5 +105,53 @@ public class Square
 		Results knightGoodResults = blackKnight.checkMove(new Square(7,4), false);
 		System.out.println(knightGoodResults.getPossible());
 		System.out.println(knightGoodResults.getStringOfSquares());
+		
+		Rook whiteRook = new Rook(new Square(2,7), true);
+		//This should print out the rook image
+		System.out.println(whiteRook.getImage());
+		//This should be true, since the rook is white
+		System.out.println(whiteRook.getWhetherWhite());
+		//Test out moving to 3,8 - this shouldn't work
+		Results rookBadSquareResults = whiteRook.checkMove(new Square(3,8), true);
+		System.out.println(rookBadSquareResults.getPossible());
+		//Testing out a possible vertical move
+		Results rookGoodVertResults = whiteRook.checkMove(new Square(2,6), true);
+		System.out.println(rookGoodVertResults.getPossible());
+		//Testing out a possible horizontal move and returning the squares that will need to be passed through for the move
+		Results rookGoodHorizResults = whiteRook.checkMove(new Square(5,7), true);
+		System.out.println(rookGoodHorizResults.getPossible());
+		System.out.println(rookGoodHorizResults.getStringOfSquares());
+		
+		Queen blackQueen = new Queen(new Square(3,5), false);
+		//This should print out the queen image
+		System.out.println(blackQueen.getImage());
+		//This should be false, since the queen is black
+		System.out.println(blackQueen.getWhetherWhite());
+		//Test out moving to 4,8 - this shouldn't work
+		Results queenBadSquareResults = blackQueen.checkMove(new Square(4,8), false);
+		System.out.println(queenBadSquareResults.getPossible());
+		//Testing out a possible vertical move
+		Results queenGoodVertResults = blackQueen.checkMove(new Square(3,2), false);
+		System.out.println(queenGoodVertResults.getPossible());
+		//Testing out a possible horizontal move
+		Results queenGoodHorizResults = blackQueen.checkMove(new Square(5,5), false);
+		System.out.println(queenGoodHorizResults.getPossible());
+		//Testing out a possible diagonal move and returning the squares that will need to be passed through for the move
+		Results queenGoodDiagResults = blackQueen.checkMove(new Square(6,8), false);
+		System.out.println(queenGoodDiagResults.getPossible());
+		System.out.println(queenGoodDiagResults.getStringOfSquares());
+		
+		King whiteKing = new King(new Square(5,4), true);
+		//This should print out the king image
+		System.out.println(whiteKing.getImage());
+		//This should be true, since the king is white
+		System.out.println(whiteKing.getWhetherWhite());
+		//Test out moving to 3,8 - this shouldn't work
+		Results kingBadSquareResults = whiteKing.checkMove(new Square(4,6), true);
+		System.out.println(kingBadSquareResults.getPossible());
+		//Testing out a possible move and returning the squares that will need to be passed through for the move
+		Results kingGoodSquareResults = whiteKing.checkMove(new Square(6,3), true);
+		System.out.println(kingGoodSquareResults.getPossible());
+		System.out.println(kingGoodSquareResults.getStringOfSquares());
 	}
 }
