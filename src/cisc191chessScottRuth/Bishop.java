@@ -47,16 +47,16 @@ public class Bishop extends Piece
 	 * and if so, what spaces the bishop would pass through.
 	 */
 	@Override
-	public Results checkMove(Square endPosition, boolean player1Goes)
+	public Results checkMove(Square endPosition, boolean player1Goes) throws IllegalMoveException
 	{
 		//If the piece is not controlled by the active player, the move can't work
 		if(this.getWhetherWhite() != player1Goes)
 		{
-			return new Results(false);
+			throw new IllegalMoveException("It's not your turn");
 			//To be a possible move for a bishop, the destination must be the same distance away in rows as in columns
 		}else if(Math.abs(endPosition.getColumn() - this.getPosition().getColumn()) != Math.abs(endPosition.getRow()-this.getPosition().getRow()))
 		{
-			return new Results(false);
+			throw new IllegalMoveException("Bishop must move within its diagonal");
 		}else
 		{
 			//rowFactor is 1 if the move increases the row number of the bishop and -1 if it decreases it

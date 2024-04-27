@@ -46,12 +46,12 @@ public class Knight extends Piece
 	 * and if so, what space the knight finishes on.
 	 */
 	@Override
-	public Results checkMove(Square endPosition, boolean player1Goes)
+	public Results checkMove(Square endPosition, boolean player1Goes) throws IllegalMoveException
 	{
 		//If the piece is not controlled by the active player, the move can't work
 		if(this.getWhetherWhite() != player1Goes)
 		{
-			return new Results(false);
+			throw new IllegalMoveException("It's not your turn");
 			//The knight can move 3 rows over and 1 column over in the positive or negative
 		}else if(Math.abs(endPosition.getRow()-this.getPosition().getRow()) == 3)
 		{
@@ -72,6 +72,6 @@ public class Knight extends Piece
 			}
 		}
 		//If the move is not one of the two types above, (3 and 1 or 1 and 3) it cannot be made
-		return new Results(false);
+		throw new IllegalMoveException("Knight must move in an L shape");
 	}
 }

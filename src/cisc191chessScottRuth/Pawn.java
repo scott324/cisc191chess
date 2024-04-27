@@ -46,12 +46,12 @@ public class Pawn extends Piece
 	 * and if so, what space the pawn would land on.
 	 */
 	@Override
-	public Results checkMove(Square endPosition, boolean player1Goes)
+	public Results checkMove(Square endPosition, boolean player1Goes) throws IllegalMoveException
 	{
 		//So far for the program, we assume that the pawn cannot leave its column
 		if(endPosition.getColumn() != this.getPosition().getColumn())
 		{
-			return new Results(false);
+			throw new IllegalMoveException("Pawn must move in its column");
 		}
 		//If it is player 1's turn, only white pawns can move
 		//So far for the program, we assume that the pawn can only move one space at a time
@@ -60,7 +60,7 @@ public class Pawn extends Piece
 		{
 			if(!player1Goes)
 			{
-				return new Results(false);
+				throw new IllegalMoveException("It's not your turn");
 			}
 			if(endPosition.getRow()==this.getPosition().getRow()+1)
 			{
@@ -68,14 +68,14 @@ public class Pawn extends Piece
 				passedSquares.add(endPosition);
 				return new Results(passedSquares, true);
 			}
-			return new Results(false);
+			throw new IllegalMoveException("Pawn can only move one space");
 		}
 		//If the method has reached this point, then the pawn is black and can only move if it is player 2's turn and not player 1's
 		//So far for the program, we assume that the pawn can only move one space at a time
 		//The black pawn moves one row back each move relative to the numbering system
 		if(player1Goes)
 		{
-			return new Results(false);
+			throw new IllegalMoveException("It's not your turn");
 		}
 		if(endPosition.getRow()==this.getPosition().getRow()-1)
 		{
@@ -83,7 +83,7 @@ public class Pawn extends Piece
 			passedSquares.add(endPosition);
 			return new Results(passedSquares, true);
 		}
-		return new Results(false);
+		throw new IllegalMoveException("Pawn can only move one space");
 	}
 
 }

@@ -64,6 +64,7 @@ public class Square
 	//This method tests various things about the classes I have created so far
 	public static void main(String [] args)
 	{
+		/*
 		Bishop whiteBishop = new Bishop(new Square(3,4), true);
 		//This should print out the bishop image 
 		System.out.println(whiteBishop.getImage());
@@ -153,5 +154,6 @@ public class Square
 		Results kingGoodSquareResults = whiteKing.checkMove(new Square(6,3), true);
 		System.out.println(kingGoodSquareResults.getPossible());
 		System.out.println(kingGoodSquareResults.getStringOfSquares());
+		*/
 	}
 }

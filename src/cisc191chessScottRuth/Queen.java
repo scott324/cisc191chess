@@ -45,14 +45,15 @@ public class Queen extends Piece
 		* @param player1Goes if this is true, then only white pieces can move. Otherwise, only black pieces can move
 		* @return a Results object storing whether the check found the move to be possible,
 		* and if so, what spaces the queen would pass through.
+		 * @throws IllegalMoveException 
 		*/
 		@Override
-		public Results checkMove(Square endPosition, boolean player1Goes)
+		public Results checkMove(Square endPosition, boolean player1Goes) throws IllegalMoveException
 		{
 			//If the piece is not controlled by the active player, the move can't work
 			if(this.getWhetherWhite() != player1Goes)
 			{
-				return new Results(false);
+				throw new IllegalMoveException("It's not your turn");
 				//To be a possible move for a queen, the destination must be in the same row, 
 				//or in the same column, or be the same distance away in rows as in columns
 				
@@ -103,7 +104,7 @@ public class Queen extends Piece
 				return new Results(passedSquares, true);
 			}else
 			{
-				return new Results(false);
+				throw new IllegalMoveException("Queen must move within a single row, column, or diagonal");
 			}
 		}
 }

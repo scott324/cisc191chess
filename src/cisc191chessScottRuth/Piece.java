@@ -81,5 +81,5 @@ public abstract class Piece
 		image = newImage;
 	}
 	//Since each type of piece moves differently, they will each override this method differently
-	public abstract Results checkMove(Square endPosition, boolean player1Goes);
+	public abstract Results checkMove(Square endPosition, boolean player1Goes) throws IllegalMoveException;
 }

@@ -1,5 +1,7 @@
 package cisc191chessScottRuth;
 
+import javax.swing.JOptionPane;
+
 /**
 * 
  * Lead Author(s):
@@ -13,7 +15,9 @@ package cisc191chessScottRuth;
  * Retrieved from https://open.umn.edu/opentextbooks/textbooks/java-java-java-object-oriented-problem-solving
  * 
  * Gaddis, T. (2015). Starting out with Java: From control structures through objects. Addison-Wesley. 
- *  
+ * 
+ * https://www.geeksforgeeks.org/java-joptionpane/
+ * 
  * Version/date: 1.0
  * 
  * Responsibilities of class:
@@ -34,6 +38,7 @@ public class Game
 	//at the beginning of a chess game
 	public Game()
 	{
+		//White Pieces
 		player1Goes = true;
 		Board[1][1] = new Rook(new Square(1,1),true);
 		Board[8][1] = new Rook(new Square(8,1),true);
@@ -46,6 +51,20 @@ public class Game
 		for(int i=1;i<9;i++)
 		{
 			Board[i][2] = new Pawn(new Square(i,2),true);
+		}
+		
+		//Black pieces
+		Board[1][8] = new Rook(new Square(1,8),false);
+		Board[8][8] = new Rook(new Square(8,8),false);
+		Board[2][8] = new Knight(new Square(2,8),false);
+		Board[7][8] = new Knight(new Square(7,8),false);
+		Board[3][8] = new Bishop(new Square(3,8),false);
+		Board[6][8] = new Bishop(new Square(6,8),false);
+		Board[4][8] = blackKing;
+		Board[5][8] = new Queen(new Square(5,8),false);
+		for(int i=1;i<9;i++)
+		{
+			Board[i][7] = new Pawn(new Square(i,7),false);
 		}
 	}
 	/**
@@ -97,9 +116,14 @@ public class Game
 	public boolean testMovePath(Piece pieceToMove, Square destination)
 	{
 		//Uses the piece's checkMove method first. If that test fails, this one should too
-		Results moveResults = pieceToMove.checkMove(destination, getIfPlayer1());
-		if(!moveResults.getPossible())
+		Results moveResults;
+		try
 		{
+			moveResults = pieceToMove.checkMove(destination, getIfPlayer1());
+		}
+		catch(IllegalMoveException e)
+		{
+			JOptionPane.showMessageDialog(null, e.getError(), "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		//If the first check works, go through the squares that will need to be passed and check if they are blocked
@@ -110,6 +134,7 @@ public class Game
 			{
 				if(getPieceAtSquare(moveResults.getSquares()[i]) != null)
 				{
+					JOptionPane.showMessageDialog(null, "A piece is in the way", "Error", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 			}
@@ -119,6 +144,7 @@ public class Game
 		{
 			if(getPieceAtSquare(destination).getWhetherWhite() == pieceToMove.getWhetherWhite())
 			{
+				JOptionPane.showMessageDialog(null, "A piece is in the way", "Error", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 		}
@@ -177,17 +203,12 @@ public class Game
 			{
 				Board[start.getColumn()][start.getRow()]=Board[destination.getColumn()][destination.getRow()];
 				Board[destination.getColumn()][destination.getRow()]=backup;
-				//I will set up a way to alert the user when I make the rest of the GUI, this is just a reminder
-				System.out.println("error message");
+				JOptionPane.showMessageDialog(null, "This move would place you in check", "Error", JOptionPane.ERROR_MESSAGE);
 			}else
 			{
 				//If the move does work, it is now the other player's turn
 				player1Goes = !player1Goes;
 			}
-		}else
-		{
-			//I will set up a way to alert the user when I make the rest of the GUI, this is just a reminder
-			System.out.println("other error message");
 		}
 	}
 	public static void main(String [] args)
@@ -202,5 +223,7 @@ public class Game
 			}
 			System.out.println();
 		}
+		//Testing the error message system
+		boolean errorTest = mainGame.testMovePath(mainGame.getPieceAtCoordinates(1, 2), new Square(2,2));
 	}
 }
