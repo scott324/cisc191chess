@@ -39,7 +39,7 @@ public class Bishop extends Piece
 		}
 	}
 	/**
-	 * Purpose: Check if a bishop is moving on the right turn and in the right way
+	 * Purpose: Check if a bishop is moving in the right way
 	 * 
 	 * @param endPosition where the user has selected to put the bishop
 	 * @param player1Goes if this is true, then only white pieces can move. Otherwise, only black pieces can move
@@ -49,12 +49,8 @@ public class Bishop extends Piece
 	@Override
 	public Results checkMove(Square endPosition, boolean player1Goes) throws IllegalMoveException
 	{
-		//If the piece is not controlled by the active player, the move can't work
-		if(this.getWhetherWhite() != player1Goes)
-		{
-			throw new IllegalMoveException("It's not your turn");
-			//To be a possible move for a bishop, the destination must be the same distance away in rows as in columns
-		}else if(Math.abs(endPosition.getColumn() - this.getPosition().getColumn()) != Math.abs(endPosition.getRow()-this.getPosition().getRow()))
+		//To be a possible move for a bishop, the destination must be the same distance away in rows as in columns
+		if(Math.abs(endPosition.getColumn() - this.getPosition().getColumn()) != Math.abs(endPosition.getRow()-this.getPosition().getRow()))
 		{
 			throw new IllegalMoveException("Bishop must move within its diagonal");
 		}else

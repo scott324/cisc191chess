@@ -16,7 +16,7 @@ public class King extends Piece
 		}
 	}
 	/**
-	* Purpose: Check if a king is moving on the right turn and in the right way
+	* Purpose: Check if a king is moving in the right way
 	* 
 	* @param endPosition where the user has selected to put the queen
 	* @param player1Goes if this is true, then only white pieces can move. Otherwise, only black pieces can move
@@ -27,12 +27,8 @@ public class King extends Piece
 	@Override
 	public Results checkMove(Square endPosition, boolean player1Goes) throws IllegalMoveException
 	{
-		//If the piece is not controlled by the active player, the move can't work
-		if(this.getWhetherWhite() != player1Goes)
-		{
-			throw new IllegalMoveException("It's not your turn");
-			//To be a possible move for a king, the destination can't be more than one space away in any direction
-		}else if(Math.abs(endPosition.getColumn() - this.getPosition().getColumn()) <= 1 && Math.abs(endPosition.getRow()-this.getPosition().getRow()) <= 1)
+		//To be a possible move for a king, the destination can't be more than one space away in any direction
+		if(Math.abs(endPosition.getColumn() - this.getPosition().getColumn()) <= 1 && Math.abs(endPosition.getRow()-this.getPosition().getRow()) <= 1)
 		{
 			ArrayList <Square> passedSquares = new ArrayList <Square>();
 			//The only space passed through is the destination

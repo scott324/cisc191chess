@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -35,16 +36,16 @@ import javax.swing.JPanel;
 
 public class GameView extends JFrame
 {
-	Game game; //GameView has-a game
-	String activePlayer = "Player 1 (white)"; //GameView has-a activePlayer
-	JPanel descriptionPanel; //GameView has-a descriptionPanel
-	JPanel optionsButtons; //GameView has-a optionsButtons
-	JPanel boardPanel; //GameView has-a boardPanel
-	JLabel description; //GameView has-a description
-	JButton [][] board = new JButton [8][8]; //GameView has-a board
-	JButton saveButton; //GameView has-a saveButton
-	JButton restoreButton; //GameView has-a restoreButton
-	JButton checkmateButton; //GameView has-a checkmateButton
+	private Game game; //GameView has-a game
+	private String activePlayer = "Player 1 (white)"; //GameView has-a activePlayer
+	private JPanel descriptionPanel; //GameView has-a descriptionPanel
+	private JPanel optionsButtons; //GameView has-a optionsButtons
+	private JPanel boardPanel; //GameView has-a boardPanel
+	private JLabel description; //GameView has-a description
+	private JButton [][] board = new JButton [8][8]; //GameView has-a board
+	private JButton saveButton; //GameView has-a saveButton
+	private JButton restoreButton; //GameView has-a restoreButton
+	private JButton checkmateButton; //GameView has-a checkmateButton
 	
 	public GameView(Game theGame)
 	{
@@ -63,19 +64,19 @@ public class GameView extends JFrame
 		this.add(descriptionPanel, BorderLayout.NORTH);
 		//The board panel contains an 8 by 8 grid of buttons corresponding to the squares on the chess board
 		boardPanel = new JPanel();
-		boardPanel.setLayout(new GridLayout(8,8));
-		for(int i = 0; i<8; i++)
+		boardPanel.setLayout(new GridLayout(Game.getSquaresPerSide(),Game.getSquaresPerSide()));
+		for(int i = 0; i<Game.getSquaresPerSide(); i++)
 		{
-			for(int j = 0; j<8; j++)
+			for(int j = 0; j<Game.getSquaresPerSide(); j++)
 			{
 				//Only add an image if there is a piece on the square
-				if(theGame.getPieceAtCoordinates(j+1, i+1) != null)
+				if(game.getPieceAtCoordinates(j+1, i+1) != null)
 				{
-					board[i][j] = new JButton(String.valueOf(theGame.getPieceAtCoordinates(j+1, i+1).getImage()));
+					board[i][j] = new JButton(String.valueOf(game.getPieceAtCoordinates(j+1, i+1).getImage()));
 					board[i][j].setFont(new Font(Font.SERIF, Font.PLAIN, 60));	
 				}else
 				{
-					board[i][j] = new JButton();
+					board[i][j] = new JButton("");
 				}
 				//If the coordinates of the square sum to an even number, the square should be white
 				//Otherwise, it should be black, though gray helps the black pieces stand out better
@@ -86,6 +87,7 @@ public class GameView extends JFrame
 				{
 					board[i][j].setBackground(Color.GRAY);
 				}
+				board[i][j].addActionListener(new ChessSquareListener(game,this, j+1,i+1));
 				boardPanel.add(board[i][j]);
 			}
 		}
@@ -100,6 +102,28 @@ public class GameView extends JFrame
 		checkmateButton = new JButton("Check for checkmate");
 		optionsButtons.add(checkmateButton);
 		this.add(optionsButtons, BorderLayout.EAST);
+	}
+	/**
+	* Purpose: Change the interface to reflect any changes to the board
+	* 
+	*/
+	public void updateBoard()
+	{
+		for(int i = 0; i<Game.getSquaresPerSide(); i++)
+		{
+			for(int j = 0; j<Game.getSquaresPerSide(); j++)
+			{
+				//Only add an image if there is a piece on the square
+				if(game.getPieceAtCoordinates(j+1, i+1) != null)
+				{
+					board[i][j].setText(String.valueOf(game.getPieceAtCoordinates(j+1, i+1).getImage()));
+					board[i][j].setFont(new Font(Font.SERIF, Font.PLAIN, 60));
+				}else
+				{
+					board[i][j].setText("");
+				}
+			}
+		}
 	}
 	public static void main(String args [])
 	{

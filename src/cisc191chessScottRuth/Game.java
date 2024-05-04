@@ -31,41 +31,54 @@ public class Game
 	private boolean player1Goes; //Game has-a player1Goes
 	//The board has an extra row and an extra column which are never filled in order to avoid index confusion
 	//and because it is useful to have squares which are known to be empty
-	Piece [][] Board = new Piece[9][9];//Game has-many Board
+	private static final int squaresPerSide = 8; //Game has-a squaresPerSide
+	Piece [][] board = new Piece[squaresPerSide+1][squaresPerSide+1];//Game has-many Board
 	King whiteKing = new King(new Square(4,1),true);//Game has-a King
 	King blackKing = new King(new Square(4,8), false);
+	//startSquare stores the first square the user selects each time a move is made
+	private Square startSquare; //Game has-a startSquare
+	private boolean testingForCheck = false; //Game has-a testingForCheck
 	//This constructor sets white as the starting player and creates all the piece objects as they are
 	//at the beginning of a chess game
 	public Game()
 	{
 		//White Pieces
 		player1Goes = true;
-		Board[1][1] = new Rook(new Square(1,1),true);
-		Board[8][1] = new Rook(new Square(8,1),true);
-		Board[2][1] = new Knight(new Square(2,1),true);
-		Board[7][1] = new Knight(new Square(7,1),true);
-		Board[3][1] = new Bishop(new Square(3,1),true);
-		Board[6][1] = new Bishop(new Square(6,1),true);
-		Board[4][1] = whiteKing;
-		Board[5][1] = new Queen(new Square(5,1),true);
+		board[1][1] = new Rook(new Square(1,1),true);
+		board[8][1] = new Rook(new Square(8,1),true);
+		board[2][1] = new Knight(new Square(2,1),true);
+		board[7][1] = new Knight(new Square(7,1),true);
+		board[3][1] = new Bishop(new Square(3,1),true);
+		board[6][1] = new Bishop(new Square(6,1),true);
+		board[4][1] = whiteKing;
+		board[5][1] = new Queen(new Square(5,1),true);
 		for(int i=1;i<9;i++)
 		{
-			Board[i][2] = new Pawn(new Square(i,2),true);
+			board[i][2] = new Pawn(new Square(i,2),true);
 		}
 		
 		//Black pieces
-		Board[1][8] = new Rook(new Square(1,8),false);
-		Board[8][8] = new Rook(new Square(8,8),false);
-		Board[2][8] = new Knight(new Square(2,8),false);
-		Board[7][8] = new Knight(new Square(7,8),false);
-		Board[3][8] = new Bishop(new Square(3,8),false);
-		Board[6][8] = new Bishop(new Square(6,8),false);
-		Board[4][8] = blackKing;
-		Board[5][8] = new Queen(new Square(5,8),false);
-		for(int i=1;i<9;i++)
+		board[1][8] = new Rook(new Square(1,8),false);
+		board[8][8] = new Rook(new Square(8,8),false);
+		board[2][8] = new Knight(new Square(2,8),false);
+		board[7][8] = new Knight(new Square(7,8),false);
+		board[3][8] = new Bishop(new Square(3,8),false);
+		board[6][8] = new Bishop(new Square(6,8),false);
+		board[4][8] = blackKing;
+		board[5][8] = new Queen(new Square(5,8),false);
+		for(int i=1;i<squaresPerSide+1;i++)
 		{
-			Board[i][7] = new Pawn(new Square(i,7),false);
+			board[i][7] = new Pawn(new Square(i,7),false);
 		}
+	}
+	/**
+	* Purpose: Find out the number of squares on each edge of the board, which will always be 8
+	* 
+	* @return the number of squares (8)
+	*/
+	public static int getSquaresPerSide()
+	{
+		return squaresPerSide;
 	}
 	/**
 	* Purpose: Find out if the move is possible based on the check performed by the piece
@@ -74,7 +87,7 @@ public class Game
 	*/
 	public Piece [][] getBoard()
 	{
-		return Board;
+		return board;
 	}
 	/**
 	* Purpose: Find out a particular piece on the board given its coordinates
@@ -85,7 +98,7 @@ public class Game
 	*/
 	public Piece getPieceAtCoordinates(int column, int row)
 	{
-		return Board[column][row];
+		return board[column][row];
 	}
 	/**
 	* Purpose: Find out a particular piece on the board given the square it's on
@@ -95,7 +108,7 @@ public class Game
 	*/
 	public Piece getPieceAtSquare(Square square)
 	{
-		return Board[square.getColumn()][square.getRow()];
+		return board[square.getColumn()][square.getRow()];
 	}
 	/**
 	* Purpose: Find out if whose turn it is
@@ -115,15 +128,27 @@ public class Game
 	*/
 	public boolean testMovePath(Piece pieceToMove, Square destination)
 	{
+		//First check if the piece being moved is owned by the player moving it
+		if(pieceToMove.getWhetherWhite() != player1Goes)
+		{
+			if(!testingForCheck)
+			{
+				JOptionPane.showMessageDialog(null, "It's not your turn", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			return false;
+		}
 		//Uses the piece's checkMove method first. If that test fails, this one should too
 		Results moveResults;
 		try
 		{
-			moveResults = pieceToMove.checkMove(destination, getIfPlayer1());
+			moveResults = pieceToMove.checkMove(destination, player1Goes);
 		}
 		catch(IllegalMoveException e)
 		{
-			JOptionPane.showMessageDialog(null, e.getError(), "Error", JOptionPane.ERROR_MESSAGE);
+			if(!testingForCheck)
+			{
+				JOptionPane.showMessageDialog(null, e.getError(), "Error", JOptionPane.ERROR_MESSAGE);
+			}
 			return false;
 		}
 		//If the first check works, go through the squares that will need to be passed and check if they are blocked
@@ -134,7 +159,10 @@ public class Game
 			{
 				if(getPieceAtSquare(moveResults.getSquares()[i]) != null)
 				{
-					JOptionPane.showMessageDialog(null, "A piece is in the way", "Error", JOptionPane.ERROR_MESSAGE);
+					if(!testingForCheck)
+					{
+						JOptionPane.showMessageDialog(null, "A piece is in the way", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 					return false;
 				}
 			}
@@ -144,7 +172,10 @@ public class Game
 		{
 			if(getPieceAtSquare(destination).getWhetherWhite() == pieceToMove.getWhetherWhite())
 			{
-				JOptionPane.showMessageDialog(null, "A piece is in the way", "Error", JOptionPane.ERROR_MESSAGE);
+				if(!testingForCheck)
+				{
+					JOptionPane.showMessageDialog(null, "A piece is in the way", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 				return false;
 			}
 		}
@@ -168,19 +199,24 @@ public class Game
 		}
 		//Go through each piece on the board. If it is the opposite color of the king being check and could move to the king's position
 		//then the last player put themselves in check
-		for(int i=1;i<9;i++)
+		
+		//Temporarily switch which player can move to test if any moves could take the king
+		player1Goes = !player1Goes;
+		for(int i=1;i<squaresPerSide+1;i++)
 		{
 			for(int j=1;j<9;j++)
 			{
-				if(Board[i][j] != null)
+				if(board[i][j] != null)
 				{
-					if(Board[i][j].getWhetherWhite() != getIfPlayer1() && testMovePath(Board[i][j],kingToCheck.getPosition()))
+					if(board[i][j].getWhetherWhite() != kingToCheck.getWhetherWhite() && testMovePath(board[i][j],kingToCheck.getPosition()))
 					{
+						player1Goes = !player1Goes;
 						return true;
 					}
 				}
 			}
 		}
+		player1Goes = !player1Goes;
 		return false;
 	}
 	/**
@@ -191,39 +227,67 @@ public class Game
 	*/
 	public void move(Square start, Square destination)
 	{
-		if(testMovePath(getPieceAtSquare(start), destination))
+		//If there is no piece on the start square, a NullPointerException is thrown and caught,
+		//And the user is alerted
+		if(board[start.getColumn()][start.getRow()]!=null)
 		{
-			//If the move is possible, perform it, 
-			//but store any piece that used to be on the destination square in case the move needs to be undone
-			Piece backup = Board[destination.getColumn()][destination.getRow()];
-			Board[destination.getColumn()][destination.getRow()] = Board[start.getColumn()][start.getRow()];
-			Board[start.getColumn()][start.getRow()] = null;
-			//If the move leaves the player in check, it will have to be undone and the user alerted
-			if(checkForCheck())
+			if(testMovePath(getPieceAtSquare(start), destination))
 			{
-				Board[start.getColumn()][start.getRow()]=Board[destination.getColumn()][destination.getRow()];
-				Board[destination.getColumn()][destination.getRow()]=backup;
-				JOptionPane.showMessageDialog(null, "This move would place you in check", "Error", JOptionPane.ERROR_MESSAGE);
-			}else
-			{
-				//If the move does work, it is now the other player's turn
-				player1Goes = !player1Goes;
+				//If the move is possible, perform it, 
+				//but store any piece that used to be on the destination square in case the move needs to be undone
+				Piece backup = board[destination.getColumn()][destination.getRow()];
+				board[start.getColumn()][start.getRow()].setPosition(destination.getColumn(), destination.getRow());
+				board[destination.getColumn()][destination.getRow()] = board[start.getColumn()][start.getRow()];
+				board[start.getColumn()][start.getRow()] = null;
+				//If the move leaves the player in check, it will have to be undone and the user alerted
+				testingForCheck = true;
+				if(checkForCheck())
+				{
+					board[destination.getColumn()][destination.getRow()].setPosition(start.getColumn(),start.getRow());
+					board[start.getColumn()][start.getRow()]=board[destination.getColumn()][destination.getRow()];
+					board[destination.getColumn()][destination.getRow()]=backup;
+					JOptionPane.showMessageDialog(null, "This move would place you in check", "Error", JOptionPane.ERROR_MESSAGE);
+				}else
+				{
+					//If the move does work, it is now the other player's turn
+					player1Goes = !player1Goes;
+				}
+				testingForCheck = false;
 			}
+		}
+		else
+		{
+			JOptionPane.showMessageDialog(null, "Starting square must have a piece on it", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	/**
+	* Purpose: Handle what should happen when the user clicks on a square
+	* 
+	* @param chosenSquare clicked by the user
+	*/
+	public void selectSquare(Square chosenSquare)
+	{
+		//If no squares are currently selected, then the chosen square becomes selected as the starting square
+		if(startSquare == null)
+		{
+			startSquare = chosenSquare;
+		}
+		else if(chosenSquare != startSquare)//The end square selected must be different from the start square
+		{
+			//If a one square is already selected, the chosen square is selected as the destination and the move can be made
+			move(startSquare, chosenSquare);
+			//After the move, reset the start square so a new move can be made
+			startSquare = null;
 		}
 	}
 	public static void main(String [] args)
 	{
-		//A test of how the board looks at the start of the game using the console
 		Game mainGame = new Game();
-		for(int i=1;i<3;i++)
-		{
-			for(int j=1;j<9;j++)
-			{
-				System.out.print(mainGame.getPieceAtCoordinates(j,i).getImage());
-			}
-			System.out.println();
-		}
 		//Testing the error message system
-		boolean errorTest = mainGame.testMovePath(mainGame.getPieceAtCoordinates(1, 2), new Square(2,2));
+		//boolean errorTest = mainGame.testMovePath(mainGame.getPieceAtCoordinates(1, 2), new Square(2,2));
+		System.out.print(mainGame.getPieceAtCoordinates(2, 1).getImage());
+		mainGame.move(new Square(2,1), new Square(3,3));
+		//mainGame.selectSquare(new Square(2,1));
+		//mainGame.selectSquare(new Square(3,3));
 	}
 }

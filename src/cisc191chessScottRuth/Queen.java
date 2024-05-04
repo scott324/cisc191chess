@@ -39,7 +39,7 @@ public class Queen extends Piece
 			}
 		}
 		/**
-		* Purpose: Check if a queen is moving on the right turn and in the right way
+		* Purpose: Check if a queen is moving in the right way
 		* 
 		* @param endPosition where the user has selected to put the queen
 		* @param player1Goes if this is true, then only white pieces can move. Otherwise, only black pieces can move
@@ -50,15 +50,11 @@ public class Queen extends Piece
 		@Override
 		public Results checkMove(Square endPosition, boolean player1Goes) throws IllegalMoveException
 		{
-			//If the piece is not controlled by the active player, the move can't work
-			if(this.getWhetherWhite() != player1Goes)
-			{
-				throw new IllegalMoveException("It's not your turn");
-				//To be a possible move for a queen, the destination must be in the same row, 
-				//or in the same column, or be the same distance away in rows as in columns
+			//To be a possible move for a queen, the destination must be in the same row, 
+			//or in the same column, or be the same distance away in rows as in columns
 				
-				//First check if the row is the same
-			}else if(endPosition.getRow() == this.getPosition().getRow())
+			//First check if the row is the same
+			if(endPosition.getRow() == this.getPosition().getRow())
 			{
 				//columnFactor is 1 if the move increases the column number of the queen and -1 if it decreases it
 				int columnFactor = (endPosition.getColumn()-this.getPosition().getColumn())/Math.abs(endPosition.getColumn() - this.getPosition().getColumn());

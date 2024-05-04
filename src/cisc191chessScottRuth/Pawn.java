@@ -38,7 +38,7 @@ public class Pawn extends Piece
 		}
 	}
 	/**
-	 * Purpose: Check if a pawn is moving on the right turn and in the right way
+	 * Purpose: Check if a pawn is moving in the right way
 	 * 
 	 * @param endPosition where the user has selected to put the pawn
 	 * @param player1Goes if this is true, then only white pieces can move. Otherwise, only black pieces can move
@@ -53,15 +53,10 @@ public class Pawn extends Piece
 		{
 			throw new IllegalMoveException("Pawn must move in its column");
 		}
-		//If it is player 1's turn, only white pawns can move
 		//So far for the program, we assume that the pawn can only move one space at a time
-		//The white pawn moves one row forward each move relative to the numbering system
+		//If the pawn is white, it can only move one row forward each move relative to the numbering system
 		if(this.getWhetherWhite())
 		{
-			if(!player1Goes)
-			{
-				throw new IllegalMoveException("It's not your turn");
-			}
 			if(endPosition.getRow()==this.getPosition().getRow()+1)
 			{
 				ArrayList <Square> passedSquares = new ArrayList <Square>();
@@ -70,13 +65,9 @@ public class Pawn extends Piece
 			}
 			throw new IllegalMoveException("Pawn can only move one space");
 		}
-		//If the method has reached this point, then the pawn is black and can only move if it is player 2's turn and not player 1's
+		//If the method has reached this point, then the pawn is black
 		//So far for the program, we assume that the pawn can only move one space at a time
 		//The black pawn moves one row back each move relative to the numbering system
-		if(player1Goes)
-		{
-			throw new IllegalMoveException("It's not your turn");
-		}
 		if(endPosition.getRow()==this.getPosition().getRow()-1)
 		{
 			ArrayList <Square> passedSquares = new ArrayList <Square>();

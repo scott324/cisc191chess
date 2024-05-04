@@ -38,7 +38,7 @@ public class Knight extends Piece
 		}
 	}
 	/**
-	 * Purpose: Check if a knight is moving on the right turn and in the right way
+	 * Purpose: Check if a knight is moving in the right way
 	 * 
 	 * @param endPosition where the user has selected to put the knight
 	 * @param player1Goes if this is true, then only white pieces can move. Otherwise, only black pieces can move
@@ -48,12 +48,8 @@ public class Knight extends Piece
 	@Override
 	public Results checkMove(Square endPosition, boolean player1Goes) throws IllegalMoveException
 	{
-		//If the piece is not controlled by the active player, the move can't work
-		if(this.getWhetherWhite() != player1Goes)
-		{
-			throw new IllegalMoveException("It's not your turn");
-			//The knight can move 3 rows over and 1 column over in the positive or negative
-		}else if(Math.abs(endPosition.getRow()-this.getPosition().getRow()) == 3)
+		//The knight can move 2 rows over and 1 column over in the positive or negative
+		if(Math.abs(endPosition.getRow()-this.getPosition().getRow()) == 2)
 		{
 			if(Math.abs(endPosition.getColumn()-this.getPosition().getColumn()) == 1)
 			{
@@ -61,8 +57,8 @@ public class Knight extends Piece
 				passedSquares.add(endPosition);
 				return new Results(passedSquares, true);
 			}
-			//Or the knight can move 3 columns over and 1 row over in the positive or negative
-		}else if(Math.abs(endPosition.getColumn()-this.getPosition().getColumn()) == 3)
+			//Or the knight can move 2 columns over and 1 row over in the positive or negative
+		}else if(Math.abs(endPosition.getColumn()-this.getPosition().getColumn()) == 2)
 		{
 			if(Math.abs(endPosition.getRow()-this.getPosition().getRow()) == 1)
 			{
@@ -71,7 +67,7 @@ public class Knight extends Piece
 				return new Results(passedSquares, true);
 			}
 		}
-		//If the move is not one of the two types above, (3 and 1 or 1 and 3) it cannot be made
+		//If the move is not one of the two types above, (2 and 1 or 1 and 2) it cannot be made
 		throw new IllegalMoveException("Knight must move in an L shape");
 	}
 }
