@@ -27,6 +27,8 @@ public abstract class Piece
 	final boolean IS_WHITE;//Piece has-a IS_WHITE
 	//This is the unicode character for the chess piece
 	private char image;//Piece has-a image
+	//This used for pawn movement and determining if castling is possible
+	private boolean hasMoved;//Piece has-a hasMoved
 	
 	//This constructor sets up the position and color of the piece
 	public Piece(Square square, boolean isItWhite)
@@ -79,6 +81,23 @@ public abstract class Piece
 	public void setImage(char newImage)
 	{
 		image = newImage;
+	}
+	/**
+	 * Purpose: Let the piece know that it has moved
+	 * 
+	 */
+	public void setMoved()
+	{
+		hasMoved = true;
+	}
+	/**
+	 * Purpose: Find out the piece has moved
+	 * 
+	 * @return true if the piece has moved, otherwise false
+	 */
+	public boolean getIfMoved()
+	{
+		return hasMoved;
 	}
 	//Since each type of piece moves differently, they will each override this method differently
 	public abstract Results checkMove(Square endPosition, boolean player1Goes) throws IllegalMoveException;

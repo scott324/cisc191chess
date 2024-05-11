@@ -53,8 +53,8 @@ public class Pawn extends Piece
 		{
 			throw new IllegalMoveException("Pawn must move in its column");
 		}
-		//So far for the program, we assume that the pawn can only move one space at a time
-		//If the pawn is white, it can only move one row forward each move relative to the numbering system
+		//If the pawn is white, it can only move one row forward each move relative to the numbering system,
+		//Or two rows forward if it has not moved before
 		if(this.getWhetherWhite())
 		{
 			if(endPosition.getRow()==this.getPosition().getRow()+1)
@@ -63,18 +63,37 @@ public class Pawn extends Piece
 				passedSquares.add(endPosition);
 				return new Results(passedSquares, true);
 			}
+			//If the pawn has not moved before, it can travel two spaces
+			if(!this.getIfMoved())
+			{
+				if(endPosition.getRow()==this.getPosition().getRow()+2)
+				{
+					ArrayList <Square> passedSquares = new ArrayList <Square>();
+					passedSquares.add(endPosition);
+					return new Results(passedSquares, true);
+				}
+			}
 			throw new IllegalMoveException("Pawn can only move one space");
 		}
 		//If the method has reached this point, then the pawn is black
-		//So far for the program, we assume that the pawn can only move one space at a time
 		//The black pawn moves one row back each move relative to the numbering system
+		//Or two rows back if it has not moved before
 		if(endPosition.getRow()==this.getPosition().getRow()-1)
 		{
 			ArrayList <Square> passedSquares = new ArrayList <Square>();
 			passedSquares.add(endPosition);
 			return new Results(passedSquares, true);
 		}
+		//If the pawn has not moved before, it can travel two spaces
+		if(!this.getIfMoved())
+		{
+			if(endPosition.getRow()==this.getPosition().getRow()-2)
+			{
+				ArrayList <Square> passedSquares = new ArrayList <Square>();
+				passedSquares.add(endPosition);
+				return new Results(passedSquares, true);
+			}
+		}
 		throw new IllegalMoveException("Pawn can only move one space");
 	}
-
 }

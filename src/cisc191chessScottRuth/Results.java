@@ -64,7 +64,7 @@ public class Results
 		return passedSquares;
 	}
 	/**
-	* Purpose: Make a list of what squares the piece will have to pass through to make the move. Currently used just for testing purposes
+	* Purpose: Make a list of what squares the piece will have to pass through to make the move. Used just for testing purposes
 	* 
 	* @return a String listing the coordinates of each square passed through
 	*/

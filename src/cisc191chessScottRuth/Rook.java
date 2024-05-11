@@ -70,7 +70,7 @@ public class Rook extends Piece
 				//These spaces are each added to the array list from closest to farthest
 				for(int i=1; i <= Math.abs(endPosition.getRow()-this.getPosition().getRow());i++)
 				{
-						passedSquares.add(new Square(this.getPosition().getRow() + i*rowFactor, this.getPosition().getColumn()));
+						passedSquares.add(new Square(this.getPosition().getColumn(), this.getPosition().getRow() + i*rowFactor));
 				}
 				return new Results(passedSquares, true);
 			}else

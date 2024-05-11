@@ -21,30 +21,30 @@ import java.awt.event.ActionListener;
  * Version/date: 1.0
  * 
  * Responsibilities of class:
- * Select the correct square on a chess board when the listener's button is pressed
+ * Attempt to castle when one of the castling buttons is pressed in the chess game
  */
 
-public class ChessSquareListener implements ActionListener
+public class CastlingListener implements ActionListener
 {
-	private Game game;//ChessSquareListener has-a game
-	private Square square;//ChessSquareListener has-a square
-	private GameView gameView; //ChessSquareListener has-a gameView
+	private Game game;//CastlingListener has-a game
+	private GameView gameView; //CastlingListener has-a gameView
+	private boolean ifLeftSide; //CastlingListener has-a ifLeftSide
 	
 	//This constructor takes in a game and square for the listener and sets them accordingly
-	public ChessSquareListener(Game inputGame, GameView inputView, int column, int row)
+	public CastlingListener(Game inputGame, GameView inputView, boolean leftSide)
 	{
 		game = inputGame;
 		gameView = inputView;
-		square = new Square(column, row);
+		ifLeftSide = leftSide;
 	}
 	/**
-	* Purpose: Select the square associated with the listener
+	* Purpose: Attempt to castle in the correct direction when the button is pushed, and then update the board
 	* 
 	*/
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		game.selectSquare(square);
+		game.castle(ifLeftSide);
 		gameView.updateBoard();
 	}
 

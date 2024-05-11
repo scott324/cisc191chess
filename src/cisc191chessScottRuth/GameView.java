@@ -41,11 +41,14 @@ public class GameView extends JFrame
 	private JPanel descriptionPanel; //GameView has-a descriptionPanel
 	private JPanel optionsButtons; //GameView has-a optionsButtons
 	private JPanel boardPanel; //GameView has-a boardPanel
+	private JPanel castlingPanel; //GameView has-a castlingPanel
 	private JLabel description; //GameView has-a description
 	private JButton [][] board = new JButton [8][8]; //GameView has-a board
 	private JButton saveButton; //GameView has-a saveButton
 	private JButton restoreButton; //GameView has-a restoreButton
 	private JButton checkmateButton; //GameView has-a checkmateButton
+	private JButton leftCastle; // GameView has-a leftCastle
+	private JButton rightCastle; //GameView has-a rightCastle
 	
 	public GameView(Game theGame)
 	{
@@ -57,6 +60,7 @@ public class GameView extends JFrame
 		setVisible(true);
 		this.setTitle("Chess Game");
 		this.setLayout(new BorderLayout());
+		this.setSize(1300, 800);
 		//The description goes in the description panel at the top of the display
 		descriptionPanel = new JPanel();
 		description = new JLabel(activePlayer + ", Click a starting and finishing square to move a piece");
@@ -102,6 +106,16 @@ public class GameView extends JFrame
 		checkmateButton = new JButton("Check for checkmate");
 		optionsButtons.add(checkmateButton);
 		this.add(optionsButtons, BorderLayout.EAST);
+		//The buttons for castling go in the panel at the bottom
+		castlingPanel = new JPanel();
+		castlingPanel.setLayout(new BoxLayout(castlingPanel, BoxLayout.LINE_AXIS));
+		leftCastle = new JButton("Castle kingside");
+		leftCastle.addActionListener(new CastlingListener(game,this,true));
+		castlingPanel.add(leftCastle);
+		rightCastle = new JButton("Catle queenside");
+		castlingPanel.add(rightCastle);
+		rightCastle.addActionListener(new CastlingListener(game,this,false));
+		this.add(castlingPanel, BorderLayout.SOUTH);
 	}
 	/**
 	* Purpose: Change the interface to reflect any changes to the board

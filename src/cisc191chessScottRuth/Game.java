@@ -137,6 +137,28 @@ public class Game
 			}
 			return false;
 		}
+		//This test specifically for a diagonal move from a pawn
+		//For this to work, the following must all be true:
+		//*The piece being moved is a pawn
+		//*It is being moved to a column one to the left or right
+		//*There is a piece on the destination square, and that piece is of the opposite color as the moving piece
+		if(pieceToMove.getClass()==Pawn.class && Math.abs(destination.getColumn()-pieceToMove.getPosition().getColumn()) == 1 && 
+				board[destination.getColumn()][destination.getRow()] != null &&
+				board[destination.getColumn()][destination.getRow()].getWhetherWhite() != pieceToMove.getWhetherWhite())
+		{
+			//If the pawn is white, it should be moving forward relative to the row numbering
+			if(pieceToMove.getWhetherWhite())
+			{
+				if(destination.getRow() - pieceToMove.getPosition().getRow() == 1)
+				{
+					return true;
+				}
+			//If the pawn is black, it should be moving backward relative to the row numbering
+			}else if(destination.getRow() - pieceToMove.getPosition().getRow() == -1)
+			{
+				return true;
+			}
+		}
 		//Uses the piece's checkMove method first. If that test fails, this one should too
 		Results moveResults;
 		try
@@ -168,9 +190,10 @@ public class Game
 			}
 		}
 		//The destination square will be treated differently, since it can already be filled as long as it is by a piece of the other color
+		//If the piece being moved is a pawn, though, a piece of any color can block it
 		if(getPieceAtSquare(destination)!=null)
 		{
-			if(getPieceAtSquare(destination).getWhetherWhite() == pieceToMove.getWhetherWhite())
+			if(getPieceAtSquare(destination).getWhetherWhite() == pieceToMove.getWhetherWhite() || pieceToMove.getClass() == Pawn.class)
 			{
 				if(!testingForCheck)
 				{
@@ -249,8 +272,10 @@ public class Game
 					JOptionPane.showMessageDialog(null, "This move would place you in check", "Error", JOptionPane.ERROR_MESSAGE);
 				}else
 				{
-					//If the move does work, it is now the other player's turn
+					//If the move does work, it is now the other player's turn and the piece that moved
+					//should be marked as having moved
 					player1Goes = !player1Goes;
+					board[destination.getColumn()][destination.getRow()].setMoved();
 				}
 				testingForCheck = false;
 			}
@@ -280,14 +305,155 @@ public class Game
 			startSquare = null;
 		}
 	}
+	/**
+	* Purpose: Attempt to castle
+	* 
+	* @param leftSide, which is true if it is a left side castle and false if it is right side castle
+	*/
+	public void castle(boolean leftSide)
+	{
+		//If white is moving, the castling will happen in row 1
+		//If black is moving, the castling will happen in row 8
+		int row;
+		if(player1Goes)
+		{
+			row = 1;
+		}else
+		{
+			row = 8;
+		}
+		if(leftSide)
+		{
+			//The king and rook must be in their squares and never have moved before 
+			if(board[4][row] != null && board[1][row] != null && !board[4][row].getIfMoved() && !board[1][row].getIfMoved())
+			{
+				//the spaces between must be clear
+				if(board[2][row] == null && board[3][row] == null)
+				{
+					//The player cannot castle out of, through, or into check
+					testingForCheck = true;
+					if(!checkForCheck())
+					{
+						board[3][row] = board[4][row];
+						board[4][row].setPosition(3, row);
+						board[4][row] = null;
+						if(!checkForCheck())
+						{
+							board[2][row] = board[3][row];
+							board[3][row].setPosition(2, row);
+							board[3][row] = board[1][row];
+							board[1][row].setPosition(3, row);
+							board[1][row] = null;
+							if(!checkForCheck())
+							{
+								//At this point, the move is confirmed to work, so the turn is passed and pieces have now moved
+								player1Goes = !player1Goes;
+								board[2][row].setMoved();
+								board[3][row].setMoved();
+							}else
+							{
+								board[4][row] = board[2][row];
+								board[2][row].setPosition(4, row);
+								board[1][row] = board[3][row];
+								board[3][row].setPosition(1, row);
+								JOptionPane.showMessageDialog(null, "Cannot castle into check", "Error", JOptionPane.ERROR_MESSAGE);
+							}
+						}else
+						{
+							board[4][row] = board[3][row];
+							board[3][row].setPosition(4, row);
+							board[3][row] = null;
+							JOptionPane.showMessageDialog(null, "Cannot castle through check", "Error", JOptionPane.ERROR_MESSAGE);
+						}
+					}else
+					{
+						JOptionPane.showMessageDialog(null, "Cannot castle out of check", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}else
+				{
+					JOptionPane.showMessageDialog(null, "There is a piece in the way", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}else
+			{
+				JOptionPane.showMessageDialog(null, "The rook and the king can't have moved before", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}else
+		{
+			//The king and rook must be in their squares and never have moved before
+			if(board[4][row] != null && board[4][row] != null && !board[4][row].getIfMoved() && !board[8][row].getIfMoved())
+			{
+				//The spaces between must be clear
+				if(board[5][row] == null && board[6][row] == null && board[7][row] == null)
+				{
+					//The player cannot castle out of, through, or into check
+					testingForCheck = true;
+					if(!checkForCheck())
+					{
+						board[5][row] = board[4][row];
+						board[4][row].setPosition(5, row);
+						board[4][row] = null;
+						if(!checkForCheck())
+						{
+							board[6][row] = board[5][row];
+							board[5][row].setPosition(6, row);
+							board[5][row] = board[8][row];
+							board[8][row].setPosition(5, row);
+							board[8][row] = null;
+							if(!checkForCheck())
+							{
+								//At this point, the move is confirmed to work, so turn is passed and pieces have now moved
+								player1Goes = !player1Goes;
+								board[6][row].setMoved();
+								board[5][row].setMoved();
+								}else
+								{
+									board[4][row] = board[2][row];
+									board[2][row].setPosition(4, row);
+									board[1][row] = board[3][row];
+									board[3][row].setPosition(1, row);
+									JOptionPane.showMessageDialog(null, "Cannot castle into check", "Error", JOptionPane.ERROR_MESSAGE);
+								}
+							}else
+							{
+								board[4][row] = board[5][row];
+								board[5][row].setPosition(4, row);
+								board[5][row] = null;
+								JOptionPane.showMessageDialog(null, "Cannot castle through check", "Error", JOptionPane.ERROR_MESSAGE);
+							}
+						}else
+						{
+							JOptionPane.showMessageDialog(null, "Cannot castle out of check", "Error", JOptionPane.ERROR_MESSAGE);
+						}
+					}else
+					{
+						JOptionPane.showMessageDialog(null, "There is a piece in the way", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}else
+				{
+					JOptionPane.showMessageDialog(null, "The rook and the king can't have moved before", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		testingForCheck = false;
+	}
 	public static void main(String [] args)
 	{
-		Game mainGame = new Game();
+		//Game mainGame = new Game();
 		//Testing the error message system
 		//boolean errorTest = mainGame.testMovePath(mainGame.getPieceAtCoordinates(1, 2), new Square(2,2));
-		System.out.print(mainGame.getPieceAtCoordinates(2, 1).getImage());
-		mainGame.move(new Square(2,1), new Square(3,3));
+		//System.out.print(mainGame.getPieceAtCoordinates(2, 1).getImage());
+		//mainGame.move(new Square(2,1), new Square(3,3));
 		//mainGame.selectSquare(new Square(2,1));
 		//mainGame.selectSquare(new Square(3,3));
+		
+//		Rook testRook = new Rook(new Square(8,8),true);
+//		try
+//		{
+//			Results testResults = testRook.checkMove(new Square(8,1), true);
+//			System.out.println(testResults.getStringOfSquares());
+//		}
+//		catch(IllegalMoveException e)
+//		{
+//			System.out.println(e.getError());
+//		}
 	}
 }
