@@ -1,5 +1,11 @@
 package cisc191chessScottRuth;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Scanner;
+
 import javax.swing.JOptionPane;
 
 /**
@@ -43,7 +49,16 @@ public class Game
 	public Game()
 	{
 		//White Pieces
+		setUpBoard();
+	}
+	/**
+	* Purpose: Set the board according to the rules of chess
+	* 
+	*/
+	public void setUpBoard()
+	{
 		player1Goes = true;
+		//White pieces
 		board[1][1] = new Rook(new Square(1,1),true);
 		board[8][1] = new Rook(new Square(8,1),true);
 		board[2][1] = new Knight(new Square(2,1),true);
@@ -69,6 +84,15 @@ public class Game
 		for(int i=1;i<squaresPerSide+1;i++)
 		{
 			board[i][7] = new Pawn(new Square(i,7),false);
+		}
+		
+		//Blank squares
+		for(int i=1; i<=squaresPerSide; i++)
+		{
+			for(int j=3; j<=squaresPerSide-2;j++)
+			{
+				board[i][j]=null;
+			}
 		}
 	}
 	/**
@@ -434,6 +458,118 @@ public class Game
 				}
 			}
 		testingForCheck = false;
+	}
+	/**
+	* Purpose: Write the details of the game to a file in a way that the game may be reconstructed later
+	* 
+	* @param fileIndex of the file that will hold the details
+	*/
+	public void saveGame(String fileIndex)
+	{
+		PrintWriter gameSaver = null;
+		try
+		{
+		    gameSaver = new PrintWriter("savedGame" + fileIndex);
+		    
+		    //The file will need to include whose turn it is
+		    gameSaver.println(player1Goes);
+		    
+		    //For each square on the board, note if it is empty with an n
+		    //If it does have a piece, note what it looks like and where on the board it started
+		    //so it can be moved from there when the game is restored
+		    for(int i=1; i<= squaresPerSide; i++)
+		    {
+		    	for(int j =1; j<= squaresPerSide; j++)
+		    	{
+		    		if(board[i][j] == null)
+		    		{
+		    			gameSaver.println(0);
+		    		}
+		    		else
+		    		{
+		    			gameSaver.println(board[i][j].getStartColumn());
+		    			gameSaver.println(board[i][j].getStartRow());
+		    		}
+		    	}
+		    }
+		} 
+		catch (FileNotFoundException e)
+		{
+			JOptionPane.showMessageDialog(null, "Unable to write to file", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		finally
+		{
+			//The only reason not to close the file writer is if it was left null to begin with
+			//In any other situation, the file writer will need to be closed, thus why this is in a finally block
+			if(gameSaver!=null)
+			{
+				gameSaver.close();
+			}
+		}
+	}
+	/**
+	* Purpose: Restore a game using the details stored in a file
+	* 
+	* @param fileIndex of the file being used to restore the game
+	*/
+	public void restoreGame(String requestedIndex)
+	{
+		//Since the pieces will be found using their starting positions, they must be in their starting positions
+		//for the restoration to work
+		setUpBoard();
+		Scanner gameScan = null;
+		try
+		{
+			//Look for the file with the details of the game and set up a scanner for it
+			File saveFile = new File("savedGame"+ requestedIndex);
+			gameScan = new Scanner(saveFile);
+			//The first thing in the file should say whose turn it is
+			player1Goes = gameScan.nextBoolean();
+			
+			//These will store the where a piece on the restored board should be moved from
+			int pieceColumn;
+			int pieceRow;
+			ArrayList <Square> blankSquares = new ArrayList <Square>();
+			for(int i=1; i<= squaresPerSide; i++)
+		    {
+		    	for(int j =1; j<= squaresPerSide; j++)
+		    	{
+		    		pieceColumn = gameScan.nextInt();
+		    		if(pieceColumn == 0)
+		    		{
+		    			//If the column is 0, the square should be empty. 
+		    			//If it is emptied now, however, then that might remove a piece which will be used later in the restoration.
+		    			//Thus, the square to be emptied is noted to be dealt with later
+		    			blankSquares.add(new Square(i, j));
+		    		}
+		    		else
+		    		{
+		    			//If there is a piece on the square, it can be brought over from its starting position
+		    			pieceRow = gameScan.nextInt();
+		    			board[i][j] = board[pieceColumn][pieceRow];
+		    			board[pieceColumn][pieceRow].setPosition(i, j);
+		    		}
+		    	}
+		    }
+			//Now that the restoration is complete, each of the squares that needs to be emptied can be emptied
+			for(int i = blankSquares.size()-1; i>=0; i--)
+			{
+				board[blankSquares.get(i).getColumn()][blankSquares.get(i).getRow()] = null;
+			}
+		}
+		catch (FileNotFoundException e)
+		{
+			JOptionPane.showMessageDialog(null, "Unable to access file", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		finally
+		{
+			//The only reason not to close the scanner is if it was left null to begin with
+			//In any other situation, the scanner will need to be closed, thus why this is in a finally block
+			if(gameScan!=null)
+			{
+				gameScan.close();
+			}
+		}
 	}
 	public static void main(String [] args)
 	{

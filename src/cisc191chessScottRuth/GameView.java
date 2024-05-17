@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 /**
 * 
@@ -44,9 +45,12 @@ public class GameView extends JFrame
 	private JPanel castlingPanel; //GameView has-a castlingPanel
 	private JLabel description; //GameView has-a description
 	private JButton [][] board = new JButton [8][8]; //GameView has-a board
+	private JTextField saveSelect; //GameView has-a saveSelect
 	private JButton saveButton; //GameView has-a saveButton
+	private JTextField restoreSelect; //GameView has-a restoreSelect
 	private JButton restoreButton; //GameView has-a restoreButton
 	private JButton checkmateButton; //GameView has-a checkmateButton
+	private JButton restartButton; //GameView has-a restartButton
 	private JButton leftCastle; // GameView has-a leftCastle
 	private JButton rightCastle; //GameView has-a rightCastle
 	
@@ -99,12 +103,21 @@ public class GameView extends JFrame
 		//The buttons for saving, restoring, and checking for checkmate go in a panel on the right
 		optionsButtons = new JPanel();
 		optionsButtons.setLayout(new BoxLayout(optionsButtons, BoxLayout.PAGE_AXIS));
-		saveButton = new JButton("Save game");
+		saveSelect = new JTextField("Enter a save number to save game:");
+		optionsButtons.add(saveSelect);
+		saveButton = new JButton("Submit");
+		saveButton.addActionListener(new SaveListener(game, saveSelect));
 		optionsButtons.add(saveButton);
-		restoreButton = new JButton("Restore a game");
+		restoreSelect = new JTextField("Enter a save number to restore that saved game:");
+		optionsButtons.add(restoreSelect);
+		restoreButton = new JButton("Submit");
+		restoreButton.addActionListener(new RestoreListener(game, restoreSelect, this));
 		optionsButtons.add(restoreButton);
 		checkmateButton = new JButton("Check for checkmate");
 		optionsButtons.add(checkmateButton);
+		restartButton = new JButton("Restart game");
+		restartButton.addActionListener(new RestartListener(game, this));
+		optionsButtons.add(restartButton);
 		this.add(optionsButtons, BorderLayout.EAST);
 		//The buttons for castling go in the panel at the bottom
 		castlingPanel = new JPanel();

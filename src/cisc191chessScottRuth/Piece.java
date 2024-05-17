@@ -29,12 +29,17 @@ public abstract class Piece
 	private char image;//Piece has-a image
 	//This used for pawn movement and determining if castling is possible
 	private boolean hasMoved;//Piece has-a hasMoved
+	//These store the coordinates the piece is at when it is first created
+	private final int startingColumn;//Piece has-a startingColumn
+	private final int startingRow;//Piece has-a startingRow
 	
 	//This constructor sets up the position and color of the piece
 	public Piece(Square square, boolean isItWhite)
 	{
 		position = square;
 		IS_WHITE = isItWhite;
+		startingColumn = square.getColumn();
+		startingRow = square.getRow();
 	}
 	/**
 	 * Purpose: Change the position of the piece
@@ -98,6 +103,24 @@ public abstract class Piece
 	public boolean getIfMoved()
 	{
 		return hasMoved;
+	}
+	/**
+	 * Purpose: Find out what column the piece started in
+	 * 
+	 * @return the number of the column
+	 */
+	public int getStartColumn()
+	{
+		return startingColumn;
+	}
+	/**
+	 * Purpose: Find out what row the piece started in
+	 * 
+	 * @return the number of the row
+	 */
+	public int getStartRow()
+	{
+		return startingRow;
 	}
 	//Since each type of piece moves differently, they will each override this method differently
 	public abstract Results checkMove(Square endPosition, boolean player1Goes) throws IllegalMoveException;
