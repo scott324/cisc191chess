@@ -26,7 +26,7 @@ import javax.swing.JTextField;
  * Save a chess game in a file named with the number submitted by the user
  */
 
-public class SaveListener implements ActionListener
+public class SaveListener implements ActionListener //SaveListener is ActionListener
 {
 	private Game game; //SaveListener has-a theGame
 	private JTextField saveSelect; //SaveListener has-a saveSelect

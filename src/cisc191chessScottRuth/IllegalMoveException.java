@@ -20,21 +20,11 @@ package cisc191chessScottRuth;
  * Be thrown when a chess player attempts to make an illegal move
  */
 
-public class IllegalMoveException extends Exception
+public class IllegalMoveException extends Exception //IllegalMoveException is-a Exception
 {
-	String errorMessage;//IllegalMoveException has-a errorMessage
-	//This constructor takes in a String for the errorMessage
+	//This constructor takes in a String for the error message
 	public IllegalMoveException(String inputError)
 	{
-		errorMessage = inputError;
-	}
-	/**
-	* Purpose: Find out the error message associated with the move
-	* 
-	* @return the message
-	*/
-	public String getError()
-	{
-		return errorMessage;
+		super(inputError);
 	}
 }

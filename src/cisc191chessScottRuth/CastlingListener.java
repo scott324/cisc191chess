@@ -24,7 +24,7 @@ import java.awt.event.ActionListener;
  * Attempt to castle when one of the castling buttons is pressed in the chess game
  */
 
-public class CastlingListener implements ActionListener
+public class CastlingListener implements ActionListener //CastlingListener is ActionListener
 {
 	private Game game;//CastlingListener has-a game
 	private GameView gameView; //CastlingListener has-a gameView

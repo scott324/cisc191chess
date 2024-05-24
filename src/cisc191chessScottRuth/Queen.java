@@ -23,7 +23,7 @@ import java.lang.Math;
  * Use the queen image and rules of queen movement
  */
 
-public class Queen extends Piece
+public class Queen extends Piece // Queen is-a Piece
 {
 	//This constructor uses the superconstructor to set up the position and color, 
 	//and then uses the appropriate unicode character for a queen, depending on the color

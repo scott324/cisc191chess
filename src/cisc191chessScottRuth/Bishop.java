@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * Use the bishop image and rules of bishop movement
  */
 
-public class Bishop extends Piece
+public class Bishop extends Piece //Bishop is-a Piece
 {
 	//This constructor uses the superconstructor to set up the position and color, 
 	//and then uses the appropriate unicode character for a bishop, depending on the color

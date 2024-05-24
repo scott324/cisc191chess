@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * Use the rook image and rules of rook movement
  */
 
-public class Rook extends Piece
+public class Rook extends Piece //Rook is-a Piece
 {
 	//This constructor uses the superconstructor to set up the position and color, 
 	//and then uses the appropriate unicode character for a rook, depending on the color

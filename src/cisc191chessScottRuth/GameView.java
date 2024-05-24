@@ -35,10 +35,9 @@ import javax.swing.JTextField;
  * Handle the GUI of a chess game
  */
 
-public class GameView extends JFrame
+public class GameView extends JFrame //GameView is-a JFrame
 {
 	private Game game; //GameView has-a game
-	private String activePlayer = "Player 1 (white)"; //GameView has-a activePlayer
 	private JPanel descriptionPanel; //GameView has-a descriptionPanel
 	private JPanel optionsButtons; //GameView has-a optionsButtons
 	private JPanel boardPanel; //GameView has-a boardPanel
@@ -67,7 +66,7 @@ public class GameView extends JFrame
 		this.setSize(1300, 800);
 		//The description goes in the description panel at the top of the display
 		descriptionPanel = new JPanel();
-		description = new JLabel(activePlayer + ", Click a starting and finishing square to move a piece");
+		description = new JLabel("Player 1 (white), Click a starting and finishing square to move a piece");
 		descriptionPanel.add(description);
 		this.add(descriptionPanel, BorderLayout.NORTH);
 		//The board panel contains an 8 by 8 grid of buttons corresponding to the squares on the chess board
@@ -114,6 +113,7 @@ public class GameView extends JFrame
 		restoreButton.addActionListener(new RestoreListener(game, restoreSelect, this));
 		optionsButtons.add(restoreButton);
 		checkmateButton = new JButton("Check for checkmate");
+		checkmateButton.addActionListener(new CheckmateListener(game));
 		optionsButtons.add(checkmateButton);
 		restartButton = new JButton("Restart game");
 		restartButton.addActionListener(new RestartListener(game, this));
@@ -151,6 +151,15 @@ public class GameView extends JFrame
 				}
 			}
 		}
+		if(game.getIfPlayer1())
+		{
+			description.setText("Player 1 (white), Click a starting and finishing square to move a piece");
+		}
+		else
+		{
+			description.setText("Player 2 (black), Click a starting and finishing square to move a piece");
+		}
+		
 	}
 	public static void main(String args [])
 	{

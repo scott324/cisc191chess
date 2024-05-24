@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * Use the knight image and rules of knight movement
  */
 
-public class Knight extends Piece
+public class Knight extends Piece //Knight is-a Piece
 {
 	//This constructor uses the superconstructor to set up the position and color, 
 	//and then uses the appropriate unicode character for a knight, depending on the color

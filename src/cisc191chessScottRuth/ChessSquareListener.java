@@ -24,7 +24,7 @@ import java.awt.event.ActionListener;
  * Select the correct square on a chess board when the listener's button is pressed
  */
 
-public class ChessSquareListener implements ActionListener
+public class ChessSquareListener implements ActionListener //ChessSquareListener is ActionListener
 {
 	private Game game;//ChessSquareListener has-a game
 	private Square square;//ChessSquareListener has-a square

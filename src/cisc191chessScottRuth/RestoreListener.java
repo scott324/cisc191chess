@@ -26,7 +26,7 @@ import javax.swing.JTextField;
  * Restore a chess game using a file named with the number submitted by the user
  */
 
-public class RestoreListener implements ActionListener
+public class RestoreListener implements ActionListener //RestoreListener is ActionListener
 {
 	private Game game; //SaveListener has-a theGame
 	private JTextField saveSelect; //SaveListener has-a saveSelect

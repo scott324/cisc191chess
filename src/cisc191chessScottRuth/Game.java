@@ -43,7 +43,9 @@ public class Game
 	King blackKing = new King(new Square(4,8), false);
 	//startSquare stores the first square the user selects each time a move is made
 	private Square startSquare; //Game has-a startSquare
+	//These two booleans ensure no error messages appear while the program is running tests which don't involve user input
 	private boolean testingForCheck = false; //Game has-a testingForCheck
+	private boolean testingForCheckmate = false; //Game has-a testingForCheck
 	//This constructor sets white as the starting player and creates all the piece objects as they are
 	//at the beginning of a chess game
 	public Game()
@@ -193,7 +195,7 @@ public class Game
 		{
 			if(!testingForCheck)
 			{
-				JOptionPane.showMessageDialog(null, e.getError(), "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			return false;
 		}
@@ -293,13 +295,27 @@ public class Game
 					board[destination.getColumn()][destination.getRow()].setPosition(start.getColumn(),start.getRow());
 					board[start.getColumn()][start.getRow()]=board[destination.getColumn()][destination.getRow()];
 					board[destination.getColumn()][destination.getRow()]=backup;
-					JOptionPane.showMessageDialog(null, "This move would place you in check", "Error", JOptionPane.ERROR_MESSAGE);
+					if(!testingForCheckmate)
+					{
+						JOptionPane.showMessageDialog(null, "This move would place you in check", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}else
 				{
-					//If the move does work, it is now the other player's turn and the piece that moved
-					//should be marked as having moved
-					player1Goes = !player1Goes;
-					board[destination.getColumn()][destination.getRow()].setMoved();
+					//If a move works, then the player is not in checkmate and the test can end. The piece needs to be put back, though
+					if(testingForCheckmate)
+					{
+						board[destination.getColumn()][destination.getRow()].setPosition(start.getColumn(),start.getRow());
+						board[start.getColumn()][start.getRow()]=board[destination.getColumn()][destination.getRow()];
+						board[destination.getColumn()][destination.getRow()]=backup;
+						testingForCheckmate = false;
+					}
+					else
+					{
+						//If the move does work and this is not a check, it is now the other player's turn and the piece that moved
+						//should be marked as having moved
+						player1Goes = !player1Goes;
+						board[destination.getColumn()][destination.getRow()].setMoved();
+					}
 				}
 				testingForCheck = false;
 			}
@@ -571,25 +587,54 @@ public class Game
 			}
 		}
 	}
-	public static void main(String [] args)
+	/**
+	* Purpose: Find out if the active player is in checkmate
+	* 
+	* @return true if the player is in checkmate, otherwise false
+	*/
+	public boolean checkForCheckmate()
 	{
-		//Game mainGame = new Game();
-		//Testing the error message system
-		//boolean errorTest = mainGame.testMovePath(mainGame.getPieceAtCoordinates(1, 2), new Square(2,2));
-		//System.out.print(mainGame.getPieceAtCoordinates(2, 1).getImage());
-		//mainGame.move(new Square(2,1), new Square(3,3));
-		//mainGame.selectSquare(new Square(2,1));
-		//mainGame.selectSquare(new Square(3,3));
-		
-//		Rook testRook = new Rook(new Square(8,8),true);
-//		try
-//		{
-//			Results testResults = testRook.checkMove(new Square(8,1), true);
-//			System.out.println(testResults.getStringOfSquares());
-//		}
-//		catch(IllegalMoveException e)
-//		{
-//			System.out.println(e.getError());
-//		}
+		testingForCheckmate = true;
+		//For every piece on the board controlled by the active player, check all of its possible moves
+		//If it can move successfully, the player is not in checkmate
+		for(int i=1; i<=squaresPerSide; i++)
+		{
+			for(int j=1; j<=squaresPerSide; j++)
+			{
+				if(board[i][j] != null)
+				{
+					if(board[i][j].getWhetherWhite() == player1Goes)
+					{
+						//To check all moves possible for the piece board[i][j], go through each other square on the board
+						//and see if the piece can move there
+						for(int k=1; k<=squaresPerSide; k++)
+						{
+							for(int n=1; n<=squaresPerSide; n++)
+							{
+								if(k==i&&j==n)
+								{
+									//no need to check moving a piece to its own square
+								}
+								else
+								{
+									//Even though this isn't a test for check, it's still best to avoid as many error messages as
+									//possible, so turn on testingForCheck
+									testingForCheck = true;
+									move(new Square(i,j), new Square(k,n));
+									if(!testingForCheckmate)
+									{
+										testingForCheck = false;
+										return false;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		testingForCheck = false;
+		testingForCheckmate = false;
+		return true;
 	}
 }

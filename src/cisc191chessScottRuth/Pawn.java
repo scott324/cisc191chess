@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * Use the pawn image and rules of pawn movement
  */
 
-public class Pawn extends Piece
+public class Pawn extends Piece //Pawn is-a Piece
 {
 	//This constructor uses the superconstructor to set up the position and color, 
 	//and then uses the appropriate unicode character for a pawn, depending on the color

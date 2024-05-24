@@ -24,7 +24,7 @@ import java.awt.event.ActionListener;
  * Restart a chess game to its initial position when commanded by the user
  */
 
-public class RestartListener implements ActionListener
+public class RestartListener implements ActionListener //RestartListener is ActionListener
 {
 	private Game game; //RestartListener has-a game
 	private GameView gameView; //RestartListener has-a gameView
